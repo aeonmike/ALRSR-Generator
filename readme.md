@@ -79,7 +79,7 @@ chmod +x generate_sigma_reverse_shell.sh
 
 \---
 
-## 📜 Script Source (`generate\_sigma\_reverse\_shell.sh`)
+## 📜 Script Source (`generate_sigma_reverse_shell.sh`)
 
 If setting up the repository from scratch, save the following script as `generate\_sigma\_reverse\_shell.sh`:
 
@@ -87,6 +87,7 @@ If setting up the repository from scratch, save the following script as `generat
 #!/usr/bin/env bash
 #
 # Description: Automates the generation of a Linux Reverse Shell SIGMA detection rule.
+# Reference: [https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html](https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html)
 #
 
 set -euo pipefail
@@ -96,94 +97,107 @@ TITLE="Linux Interactive Reverse Shell Execution"
 AUTHOR="Detection Engineering Team"
 LEVEL="high"
 STATUS="experimental"
-OUTPUT\_FILE="lnx\_reverse\_shell\_detection.yml"
+OUTPUT_FILE="lnx_reverse_shell_detection.yml"
+REFERENCE_URL="[https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html](https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html)"
 
-
-# Function: Display usage
 usage() {
-    cat <<EOF
-Usage: $(basename "$0") \[OPTIONS]
-
-Options:
-  -t, --title <title>       Rule title (Default: "$TITLE")
+    cat <<EOF "$0") $(basename --title -t, <title Options: Usage: [OPTIONS]>       Rule title (Default: "$TITLE")
   -a, --author <author>     Rule author (Default: "$AUTHOR")
   -l, --level <level>       Severity level: low, medium, high, critical (Default: "$LEVEL")
   -s, --status <status>     Rule status: experimental, test, stable (Default: "$STATUS")
-  -o, --output <filename>   Output YAML file (Default: "$OUTPUT\_FILE")
+  -o, --output <filename>   Output YAML file (Default: "$OUTPUT_FILE")
   -h, --help                Show this help message
 
 Example:
-  $(basename "$0") -t "Suspicious Reverse Shell Command" -l critical -o custom\_rule.yml
+  $(basename "$0") -t "Suspicious Reverse Shell Command" -l critical -o custom_rule.yml
 EOF
     exit 0
 }
 
-# Function: Generate RFC 4122 UUID v4
-generate\_uuid() {
-    if command -v uuidgen >/dev/null 2>\&1; then
-        uuidgen | tr '\[:upper:]' '\[:lower:]'
-    elif \[\[ -f /proc/sys/kernel/random/uuid ]]; then
+generate_uuid() {
+    if command -v uuidgen >/dev/null 2>&1; then
+        uuidgen | tr '[:upper:]' '[:lower:]'
+    elif [[ -f /proc/sys/kernel/random/uuid ]]; then
         cat /proc/sys/kernel/random/uuid
     else
         od -x /dev/urandom | head -1 | awk '{OFS="-"; print $2$3,$4,$5,$6,$7$8$9}'
     fi
 }
 
-# Parse command line flags
-while \[\[ $# -gt 0 ]]; do
+while [[ $# -gt 0 ]]; do
     case "$1" in
-        -t|--title) TITLE="$2"; shift 2 ;;
-        -a|--author) AUTHOR="$2"; shift 2 ;;
-        -l|--level) LEVEL="$2"; shift 2 ;;
-        -s|--status) STATUS="$2"; shift 2 ;;
-        -o|--output) OUTPUT\_FILE="$2"; shift 2 ;;
-        -h|--help) usage ;;
-        \*) echo "\[-] Error: Unknown argument $1" >\&2; usage ;;
+        -t|--title)
+            TITLE="$2"
+            shift 2
+            ;;
+        -a|--author)
+            AUTHOR="$2"
+            shift 2
+            ;;
+        -l|--level)
+            LEVEL="$2"
+            shift 2
+            ;;
+        -s|--status)
+            STATUS="$2"
+            shift 2
+            ;;
+        -o|--output)
+            OUTPUT_FILE="$2"
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            ;;
+        *)
+            echo "[-] Error: Unknown argument $1" >&2
+            usage
+            ;;
     esac
 done
 
-RULE\_ID=$(generate\_uuid)
-DATE\_TODAY=$(date -u +"%Y-%m-%d")
+RULE_ID=$(generate_uuid)
+DATE_TODAY=$(date -u +"%Y-%m-%d")
 
-echo "\[\*] Generating SIGMA rule: '$TITLE'..."
-echo "\[\*] Rule ID: $RULE\_ID"
-echo "\[\*] Destination: $OUTPUT\_FILE"
+echo "[*] Generating SIGMA rule: '$TITLE'..."
+echo "[*] Rule ID: $RULE_ID"
+echo "[*] Destination: $OUTPUT_FILE"
 
-cat <<EOF > "$OUTPUT\_FILE"
+cat <<EOF> "$OUTPUT_FILE"
 title: ${TITLE}
-id: ${RULE\_ID}
+id: ${RULE_ID}
 status: ${STATUS}
 description: Detects command-line execution patterns characteristic of interactive Linux reverse shell attempts via Bash network redirects, Netcat, scripting runtimes, or named pipes.
 references:
-    - ${REFERENCE\_URL}
-    - https://attack.mitre.org/techniques/T1059/004/
+    - ${REFERENCE_URL}
+    - [https://attack.mitre.org/techniques/T1059/004/](https://attack.mitre.org/techniques/T1059/004/)
 author: ${AUTHOR}
-date: ${DATE\_TODAY}
-modified: ${DATE\_TODAY}
+date: ${DATE_TODAY}
+modified: ${DATE_TODAY}
 tags:
     - attack.execution
     - attack.t1059.004
     - attack.persistence
 logsource:
-    category: process\_creation
+    category: process_creation
     product: linux
 detection:
-    selection\_bash\_dev\_tcp:
+    selection_bash_dev_tcp:
         CommandLine|contains:
             - '/dev/tcp/'
             - '/dev/udp/'
-            - '>\& /dev/tcp/'
-            - '>\& /dev/udp/'
+            - '>& /dev/tcp/'
+            - '>& /dev/udp/'
             - 'exec 5<>/dev/tcp/'
 
-    selection\_sh\_redirect:
+    selection_sh_redirect:
         CommandLine|contains:
-            - 'sh -i >\&'
-            - 'bash -i >\&'
-            - '0<\&1'
-            - '0>\&1'
+            - 'sh -i >&'
+            - 'bash -i >&'
+            - '0<&1'
+            - '0>&1'
 
-    selection\_netcat:
+    selection_netcat:
         CommandLine|contains:
             - 'nc -e /'
             - 'nc.traditional -e /'
@@ -191,7 +205,7 @@ detection:
             - 'ncat --exec /'
             - 'nc -c /'
 
-    selection\_inline\_interpreters:
+    selection_inline_interpreters:
         CommandLine|contains:
             - 'socket.socket('
             - 'pty.spawn('
@@ -200,52 +214,52 @@ detection:
             - 'fsockopen('
             - 'use Socket;'
 
-    selection\_socat:
+    selection_socat:
         CommandLine|contains:
             - 'socat exec:'
             - 'socat tcp-connect:'
             - 'socat tcp4-connect:'
 
-    selection\_fifo:
+    selection_fifo:
         CommandLine|contains:
             - 'mkfifo /tmp/'
             - 'mknod /tmp/'
 
-    condition: 1 of selection\_\*
+    condition: 1 of selection_*
 falsepositives:
     - Legitimate administrator automation or remote maintenance utilities
     - Specialized local container synchronization scripts
 level: ${LEVEL}
 EOF
 
-echo "\[+] Successfully generated: $OUTPUT\_FILE"
+echo "[+] Successfully generated: $OUTPUT_FILE"
 ```
 
 \---
 
 ## ⚙️ Usage \& CLI Options
 
-### 1\. Default Generation
+### 1. Default Generation
 
 Run without parameters to create a rule with baseline production defaults:
 
 ```bash
-./generate\_sigma\_reverse\_shell.sh
+.generate_sigma_reverse_shell.sh
 ```
 
-*Output File:* `lnx\_reverse\_shell\_detection.yml`
+*Output File:* `lnx_reverse_shell_detection.yml`
 
 ### 2\. Custom Invocation
 
 Customize metadata and destination parameters via flags:
 
 ```bash
-./generate\_sigma\_reverse\_shell.sh \\
-  --title "Interactive Reverse Shell Execution Detected" \\
-  --author "Tier 3 Detection Engineering" \\
-  --level critical \\
-  --status stable \\
-  --output ./rules/linux\_revshell\_custom.yml
+./generate_sigma_reverse_shell.sh \
+  --title "Interactive Reverse Shell Execution Detected" \
+  --author "Tier 3 Detection Engineering" \
+  --level critical \
+  --status stable \
+  --output ./rules/linux_revshell_custom.yml
 ```
 
 ### CLI Arguments Reference
