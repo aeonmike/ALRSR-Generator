@@ -281,8 +281,7 @@ id: f47ac10b-58cc-4372-a567-0e02b2c3d479
 status: experimental
 description: Detects command-line execution patterns characteristic of interactive Linux reverse shell attempts via Bash network redirects, Netcat, scripting runtimes, or named pipes.
 references:
-    - [https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html](https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html)
-    - [https://attack.mitre.org/techniques/T1059/004/](https://attack.mitre.org/techniques/T1059/004/)
+      - [https://attack.mitre.org/techniques/T1059/004/](https://attack.mitre.org/techniques/T1059/004/)
 author: Detection Engineering Team
 date: 2026-11-06
 modified: 2026-11-06
@@ -481,7 +480,7 @@ git push -u origin main
 
 \---
 
-## 📚 References \& Attributions
+## 📚 References & Attributions
 
 * [SigmaHQ / Specification Standard](https://github.com/SigmaHQ/sigma-specification)
 * [MITRE ATT\&CK: Unix Shell Execution (T1059.004)](https://attack.mitre.org/techniques/T1059/004/)
