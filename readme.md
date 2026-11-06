@@ -67,7 +67,7 @@ The generator populates detection logic for six distinct reverse shell classes:
 
 \---
 
-## 🚀 Installation \& Setup
+## 🚀 Installation & Setup
 
 Clone the repository and set executable permissions:
 
@@ -87,8 +87,7 @@ If setting up the repository from scratch, save the following script as `generat
 #!/usr/bin/env bash
 #
 # Description: Automates the generation of a Linux Reverse Shell SIGMA detection rule.
-# Reference: [https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html](https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html)
-#
+
 
 set -euo pipefail
 
@@ -98,7 +97,6 @@ AUTHOR="Detection Engineering Team"
 LEVEL="high"
 STATUS="experimental"
 OUTPUT_FILE="lnx_reverse_shell_detection.yml"
-REFERENCE_URL="[https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html](https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html)"
 
 usage() {
     cat <<EOF "$0") $(basename --title -t, <title Options: Usage: [OPTIONS]>       Rule title (Default: "$TITLE")
@@ -244,12 +242,12 @@ echo "[+] Successfully generated: $OUTPUT_FILE"
 Run without parameters to create a rule with baseline production defaults:
 
 ```bash
-.generate_sigma_reverse_shell.sh
+.\generate_sigma_reverse_shell.sh
 ```
 
 *Output File:* `lnx_reverse_shell_detection.yml`
 
-### 2\. Custom Invocation
+### 2. Custom Invocation
 
 Customize metadata and destination parameters via flags:
 
@@ -283,7 +281,8 @@ id: f47ac10b-58cc-4372-a567-0e02b2c3d479
 status: experimental
 description: Detects command-line execution patterns characteristic of interactive Linux reverse shell attempts via Bash network redirects, Netcat, scripting runtimes, or named pipes.
 references:
-    - https://attack.mitre.org/techniques/T1059/004/
+    - [https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html](https://detection-engg.blogspot.com/2026/10/writing-your-first-sigma-rule-catching.html)
+    - [https://attack.mitre.org/techniques/T1059/004/](https://attack.mitre.org/techniques/T1059/004/)
 author: Detection Engineering Team
 date: 2026-11-06
 modified: 2026-11-06
@@ -292,30 +291,30 @@ tags:
     - attack.t1059.004
     - attack.persistence
 logsource:
-    category: process\_creation
+    category: process_creation
     product: linux
 detection:
-    selection\_bash\_dev\_tcp:
+    selection_bash_dev_tcp:
         CommandLine|contains:
             - '/dev/tcp/'
             - '/dev/udp/'
-            - '>\& /dev/tcp/'
-            - '>\& /dev/udp/'
+            - '>& /dev/tcp/'
+            - '>& /dev/udp/'
             - 'exec 5<>/dev/tcp/'
-    selection\_sh\_redirect:
+    selection_sh_redirect:
         CommandLine|contains:
-            - 'sh -i >\&'
-            - 'bash -i >\&'
-            - '0<\&1'
-            - '0>\&1'
-    selection\_netcat:
+            - 'sh -i >&'
+            - 'bash -i >&'
+            - '0<&1'
+            - '0>&1'
+    selection_netcat:
         CommandLine|contains:
             - 'nc -e /'
             - 'nc.traditional -e /'
             - 'ncat -e /'
             - 'ncat --exec /'
             - 'nc -c /'
-    selection\_inline\_interpreters:
+    selection_inline_interpreters:
         CommandLine|contains:
             - 'socket.socket('
             - 'pty.spawn('
@@ -323,16 +322,16 @@ detection:
             - 'TCPSocket.open('
             - 'fsockopen('
             - 'use Socket;'
-    selection\_socat:
+    selection_socat:
         CommandLine|contains:
             - 'socat exec:'
             - 'socat tcp-connect:'
             - 'socat tcp4-connect:'
-    selection\_fifo:
+    selection_fifo:
         CommandLine|contains:
             - 'mkfifo /tmp/'
             - 'mknod /tmp/'
-    condition: 1 of selection\_\*
+    condition: 1 of selection_*
 falsepositives:
     - Legitimate administrator automation or remote maintenance utilities
     - Specialized local container synchronization scripts
@@ -348,25 +347,25 @@ Convert the SIGMA rule into production SIEM queries using `sigma-cli`:
 ### Rule Integrity Check
 
 ```bash
-sigma check lnx\_reverse\_shell\_detection.yml
+sigma check lnx_reverse_shell_detection.yml
 ```
 
 ### Splunk Search Processing Language (SPL)
 
 ```bash
-sigma convert -t splunk -p sysmon\_linux lnx\_reverse\_shell\_detection.yml
+sigma convert -t splunk -p sysmon_linux lnx_reverse_shell_detection.yml
 ```
 
 ### Elastic / Kibana Query Language (KQL)
 
 ```bash
-sigma convert -t kibana -p elastic\_agent lnx\_reverse\_shell\_detection.yml
+sigma convert -t kibana -p elastic_agent lnx_reverse_shell_detection.yml
 ```
 
 ### Microsoft Sentinel / Defender XDR (KQL)
 
 ```bash
-sigma convert -t sentinel lnx\_reverse\_shell\_detection.yml
+sigma convert -t sentinel lnx_reverse_shell_detection.yml
 ```
 
 \---
@@ -380,9 +379,9 @@ name: SIGMA CI Pipeline
 
 on:
   push:
-    branches: \[ "main" ]
-  pull\_request:
-    branches: \[ "main" ]
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   lint-and-validate:
@@ -402,39 +401,39 @@ jobs:
 
       - name: Execute Generator Script
         run: |
-          chmod +x generate\_sigma\_reverse\_shell.sh
-          ./generate\_sigma\_reverse\_shell.sh -o test\_output.yml
+          chmod +x generate_sigma_reverse_shell.sh
+          ./generate_sigma_reverse_shell.sh -o test_output.yml
 
       - name: Validate Rule Structure
         run: |
-          sigma check test\_output.yml
+          sigma check test_output.yml
 ```
 
 \---
 
-## 🔑 Git Setup \& SSH Deployment Guide
+## 🔑 Git Setup & SSH Deployment Guide
 
 Follow these steps if you encounter permission or authentication challenges when pushing updates to GitHub.
 
-### 1\. Configure SSH Authentication
+### 1. Configure SSH Authentication
 
 Generate a secure Ed25519 authentication key:
 
 ```bash
-ssh-keygen -t ed25519 -C "your\_email@example.com"
+ssh-keygen -t ed25519 -C "your_email@example.com"
 eval "$(ssh-agent -s)"
-ssh-add \~/.ssh/id\_ed25519
+ssh-add ~.ssh/id_ed25519
 ```
 
 Display and copy your public key:
 
 ```bash
-cat \~/.ssh/id\_ed25519.pub
+cat ~.ssh/id_ed25519.pub
 ```
 
 Add the copied string to **GitHub > Settings > SSH and GPG keys > New SSH key**.
 
-### 2\. Configure Origin Remote \& Push to Main
+### 2. Configure Origin Remote & Push to Main
 
 If your local repository is still pointing to HTTPS, update it to SSH and push:
 
@@ -459,7 +458,7 @@ git push -u origin main
 
 ## ❓ Troubleshooting \& FAQ
 
-### 1\. Error: `src refspec main does not match any`
+### 1. Error: `src refspec main does not match any`
 
 * **Root Cause:** No commits have been made locally yet, or the local default branch is named `master`.
 * **Fix:**
@@ -471,7 +470,7 @@ git push -u origin main
   git push -u origin main
   ```
 
-### 2\. Error: `Permission to user/repo denied to user`
+### 2. Error: `Permission to user/repo denied to user`
 
 * **Root Cause:** Git is resolving credentials via old cached HTTPS credentials instead of your SSH key.
 * **Fix:** Ensure `git remote -v` outputs `git@github.com:...`. Test SSH connectivity with:
