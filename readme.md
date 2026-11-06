@@ -15,15 +15,15 @@ An enterprise-ready, automated Bash utility developed for Detection Engineers, T
 1. [Project Overview](#-project-overview)
 2. [Threat Vectors Detected](#-threat-vectors-detected)
 3. [Prerequisites](#-prerequisites)
-4. [Installation \& Setup](#-installation--setup)
-5. [Script Source (`generate\_sigma\_reverse\_shell.sh`)](#-script-source-generate_sigma_reverse_shellsh)
-6. [Usage \& CLI Options](#-usage--cli-options)
+4. [Installation & Setup](#-installation--setup)
+5. [Script Source (`generate_sigma_reverse_shell.sh`)](#-script-source-generate_sigma_reverse_shellsh)
+6. [Usage & CLI Options](#-usage--cli-options)
 7. [Sample Generated SIGMA Rule](#-sample-generated-sigma-rule)
 8. [SIEM Query Conversion](#-siem-query-conversion)
 9. [Automated CI/CD Validation](#-automated-cicd-validation)
-10. [Git Setup \& SSH Deployment Guide](#-git-setup--ssh-deployment-guide)
-11. [Troubleshooting \& FAQ](#-troubleshooting--faq)
-12. [References \& Attributions](#-references--attributions)
+10. [Git Setup & SSH Deployment Guide](#-git-setup--ssh-deployment-guide)
+11. [Troubleshooting & FAQ](#-troubleshooting--faq)
+12. [References & Attributions](#-references--attributions)
 
 \---
 
