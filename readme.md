@@ -74,7 +74,7 @@ Clone the repository and set executable permissions:
 ```bash
 git clone https://github.com/aeonmike/ALRSR-Generator.git
 cd ALRSR-Generator
-chmod +x generate\_sigma\_reverse\_shell.sh
+chmod +x generate_sigma_reverse_shell.sh
 ```
 
 \---
